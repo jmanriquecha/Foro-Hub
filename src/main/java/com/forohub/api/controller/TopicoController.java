@@ -22,7 +22,8 @@ public class TopicoController {
     // Lista los topicos
     @GetMapping
     public ResponseEntity<Page<DatosDetalleTopico>> listarTopicos(@PageableDefault(size = 5) Pageable paginacion){
-        return ResponseEntity.ok(repository.findAll(paginacion).map(DatosDetalleTopico::new));
+        var detalleTopico = registroDeTopicos.listarTopicos(paginacion);
+        return ResponseEntity.ok(detalleTopico);
     }
 
     // Crea nuevos topicos

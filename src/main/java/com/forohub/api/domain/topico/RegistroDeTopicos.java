@@ -5,6 +5,8 @@ import com.forohub.api.domain.curso.CursoRepository;
 import com.forohub.api.domain.usuario.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,6 +40,12 @@ public class RegistroDeTopicos {
             throw new ValidacionExcepcion("No puede estar vacio el título");
         }
 
+        // Comprobar que titulo y mensaje no esten duplicados
+        if(topicoRepository.existsByTitulo(datosRegistroTopico.titulo()) &&
+                topicoRepository.existsByMensaje(datosRegistroTopico.mensaje())){
+            throw new ValidacionExcepcion("Ya existe un topico con título y mensaje identicos!");
+        }
+
         // Elije usuario / autor
         var autor = usuarioRepository.findById(datosRegistroTopico.idUsuario()).get();
         var curso = cursoRepository.findById(datosRegistroTopico.idCurso()).get();
@@ -49,6 +57,10 @@ public class RegistroDeTopicos {
         var topico = new Topico(titulo, mensaje, autor, curso, fechaRegistro, status);
         topicoRepository.save(topico);
         return new DatosDetalleTopico(topico);
+    }
+
+    public Page<DatosDetalleTopico> listarTopicos(Pageable paginacion) {
+        return topicoRepository.findAll(paginacion).map(DatosDetalleTopico::new);
     }
 
 }
