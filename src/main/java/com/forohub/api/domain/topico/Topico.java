@@ -1,11 +1,13 @@
 package com.forohub.api.domain.topico;
 
 import com.forohub.api.domain.curso.Curso;
+import com.forohub.api.domain.respuesta.Respuesta;
 import com.forohub.api.domain.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "topicos")
 @Entity(name = "Topico")
@@ -21,7 +23,7 @@ public class Topico {
     private String titulo;
     private String mensaje;
     private LocalDateTime fechaCreacion;
-    private String status;
+    private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "autor_id")
@@ -30,12 +32,15 @@ public class Topico {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
     private Curso idCurso;
-    private String respuestas;
+    @OneToMany(mappedBy = "topico", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Respuesta> respuestas;
 
-    public Topico(String titulo, String mensaje, Usuario autor, Curso curso) {
+    public Topico(String titulo, String mensaje, Usuario autor, Curso curso, LocalDateTime fecha, Status status) {
         this.titulo = titulo;
         this.mensaje = mensaje;
         this.usuario = autor;
         this.idCurso = curso;
+        this.fechaCreacion = fecha;
+        this.status = status;
     }
 }

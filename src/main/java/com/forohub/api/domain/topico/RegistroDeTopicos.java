@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class RegistroDeTopicos {
 
@@ -20,20 +22,19 @@ public class RegistroDeTopicos {
     private CursoRepository cursoRepository;
 
     public DatosDetalleTopico agregarTopico(@Valid DatosRegistroTopico datosRegistroTopico) {
-
-        if(!usuarioRepository.existsById(datosRegistroTopico.idUsuario())){
+        if (!usuarioRepository.existsById(datosRegistroTopico.idUsuario())) {
             throw new ValidacionExcepcion("No existe un usuario con ese id");
         }
 
-        if(!cursoRepository.existsById(datosRegistroTopico.idCurso())){
+        if (!cursoRepository.existsById(datosRegistroTopico.idCurso())) {
             throw new ValidacionExcepcion("No existe el curso");
         }
 
-        if(datosRegistroTopico.mensaje() == null){
+        if (datosRegistroTopico.mensaje() == null) {
             throw new ValidacionExcepcion("El mensaje no puede estar vacio");
         }
 
-        if (datosRegistroTopico.titulo() == null){
+        if (datosRegistroTopico.titulo() == null) {
             throw new ValidacionExcepcion("No puede estar vacio el título");
         }
 
@@ -42,7 +43,10 @@ public class RegistroDeTopicos {
         var curso = cursoRepository.findById(datosRegistroTopico.idCurso()).get();
         var titulo = datosRegistroTopico.titulo();
         var mensaje = datosRegistroTopico.mensaje();
-        var topico = new Topico(titulo, mensaje, autor, curso);
+        var fechaRegistro = LocalDateTime.now();
+        var status = Status.ACTIVO;
+
+        var topico = new Topico(titulo, mensaje, autor, curso, fechaRegistro, status);
         topicoRepository.save(topico);
         return new DatosDetalleTopico(topico);
     }

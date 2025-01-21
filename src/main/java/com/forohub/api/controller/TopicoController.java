@@ -20,7 +20,7 @@ public class TopicoController {
     @PostMapping
     public ResponseEntity registrarTopicos(@RequestBody @Valid DatosRegistroTopico datosRegistroTopico){
         var detalleTopico = registroDeTopicos.agregarTopico(datosRegistroTopico);
-        return ResponseEntity.ok("Ok");
+        return ResponseEntity.ok(detalleTopico);
     }
 
 }
