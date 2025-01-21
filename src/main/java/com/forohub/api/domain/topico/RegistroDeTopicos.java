@@ -27,7 +27,7 @@ public class RegistroDeTopicos {
         }
 
         if (!cursoRepository.existsById(datosRegistroTopico.idCurso())) {
-            throw new ValidacionExcepcion("No existe el curso");
+            throw new ValidacionExcepcion("No existe el idCurso");
         }
 
         if (datosRegistroTopico.mensaje() == null) {
@@ -50,4 +50,5 @@ public class RegistroDeTopicos {
         topicoRepository.save(topico);
         return new DatosDetalleTopico(topico);
     }
+
 }
