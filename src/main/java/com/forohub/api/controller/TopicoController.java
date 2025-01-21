@@ -26,10 +26,14 @@ public class TopicoController {
         return ResponseEntity.ok(detalleTopico);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> detalleTopico(@PathVariable Long id){
+        return registroDeTopicos.muestraDetalleTopico(id);
+    }
+
     // Crea nuevos topicos
     @PostMapping
-    public ResponseEntity registrarTopicos(@RequestBody @Valid DatosRegistroTopico datosRegistroTopico){
-        var detalleTopico = registroDeTopicos.agregarTopico(datosRegistroTopico);
-        return ResponseEntity.ok(detalleTopico);
+    public ResponseEntity<?> registrarTopicos(@RequestBody @Valid DatosRegistroTopico datosRegistroTopico){
+        return registroDeTopicos.agregarTopico(datosRegistroTopico);
     }
 }

@@ -7,9 +7,13 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+
+import static org.springframework.http.ResponseEntity.status;
 
 @Service
 public class RegistroDeTopicos {
@@ -23,27 +27,34 @@ public class RegistroDeTopicos {
     @Autowired
     private CursoRepository cursoRepository;
 
-    public DatosDetalleTopico agregarTopico(@Valid DatosRegistroTopico datosRegistroTopico) {
+    // Agrega nuevo topico
+    public ResponseEntity<?> agregarTopico(@Valid DatosRegistroTopico datosRegistroTopico) {
+
         if (!usuarioRepository.existsById(datosRegistroTopico.idUsuario())) {
-            throw new ValidacionExcepcion("No existe un usuario con ese id");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No existe el usuario con ese ID");
         }
 
         if (!cursoRepository.existsById(datosRegistroTopico.idCurso())) {
-            throw new ValidacionExcepcion("No existe el idCurso");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No existe el curso con ese ID");
         }
 
         if (datosRegistroTopico.mensaje() == null) {
-            throw new ValidacionExcepcion("El mensaje no puede estar vacio");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("El mensaje no puede estar vacío");
         }
 
         if (datosRegistroTopico.titulo() == null) {
-            throw new ValidacionExcepcion("No puede estar vacio el título");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No puede estar vacío el título");
         }
 
         // Comprobar que titulo y mensaje no esten duplicados
         if(topicoRepository.existsByTitulo(datosRegistroTopico.titulo()) &&
                 topicoRepository.existsByMensaje(datosRegistroTopico.mensaje())){
-            throw new ValidacionExcepcion("Ya existe un topico con título y mensaje identicos!");
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Ya existe un topico con título y mensaje identicos!");
         }
 
         // Elije usuario / autor
@@ -56,11 +67,27 @@ public class RegistroDeTopicos {
 
         var topico = new Topico(titulo, mensaje, autor, curso, fechaRegistro, status);
         topicoRepository.save(topico);
-        return new DatosDetalleTopico(topico);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DatosDetalleTopico(topico));
     }
 
+    // Listar todos los topicos
     public Page<DatosDetalleTopico> listarTopicos(Pageable paginacion) {
         return topicoRepository.findAll(paginacion).map(DatosDetalleTopico::new);
     }
 
+    // Muestra cada topico
+    public ResponseEntity<?> muestraDetalleTopico(Long id) {
+        if(id == null){
+            return ResponseEntity.badRequest().body("El ID es obligatorio para buscar el Topico");
+        }
+
+        if(!topicoRepository.existsById(id)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    // No existe el topico en la base de datos
+                    .body("El tópico con el ID especificado no existe.");
+        }
+
+        return ResponseEntity.ok(new DatosDetalleTopico(topicoRepository.getReferenceById(id)));
+    }
 }
