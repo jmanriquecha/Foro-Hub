@@ -33,7 +33,13 @@ public class TopicoController {
 
     // Crea nuevos topicos
     @PostMapping
-    public ResponseEntity<?> registrarTopicos(@RequestBody @Valid DatosRegistroTopico datosRegistroTopico){
+    public ResponseEntity<?> registraTopicos(@RequestBody @Valid DatosRegistroTopico datosRegistroTopico){
         return registroDeTopicos.agregarTopico(datosRegistroTopico);
+    }
+
+    // Crea nuevos topicos
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizaTopicos(@PathVariable Long id, @RequestBody @Valid DatosActualizacionTopico datosActualizacionTopico){
+        return registroDeTopicos.actualizaTopico(id, datosActualizacionTopico);
     }
 }

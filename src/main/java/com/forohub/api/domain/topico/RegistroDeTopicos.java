@@ -90,4 +90,33 @@ public class RegistroDeTopicos {
 
         return ResponseEntity.ok(new DatosDetalleTopico(topicoRepository.getReferenceById(id)));
     }
+
+    public ResponseEntity<?> actualizaTopico(Long id, @Valid DatosActualizacionTopico datosActualizacionTopico) {
+        var topico = topicoRepository.getReferenceById(id);
+
+        if (datosActualizacionTopico.mensaje() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("El mensaje no puede estar vacío");
+        }
+
+        if (datosActualizacionTopico.titulo() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No puede estar vacío el título");
+        }
+
+        // Comprobar que titulo y mensaje no esten duplicados
+        if(topicoRepository.existsByTitulo(datosActualizacionTopico.titulo()) &&
+                topicoRepository.existsByMensaje(datosActualizacionTopico.mensaje())){
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Ya existe un topico con título y mensaje identicos!");
+        }
+
+        var titulo = datosActualizacionTopico.titulo();
+        var mensaje = datosActualizacionTopico.mensaje();
+
+       topico.actualizar(datosActualizacionTopico);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DatosDetalleTopico(topico));
+
+    }
 }

@@ -44,4 +44,13 @@ public class Topico {
         this.fechaCreacion = fecha;
         this.status = status;
     }
+
+    public void actualizar(DatosActualizacionTopico datosActualizacionTopico) {
+        if(datosActualizacionTopico.titulo() != null){
+            this.titulo = datosActualizacionTopico.titulo();
+        }
+        if(datosActualizacionTopico.mensaje() != null) {
+            this.mensaje = datosActualizacionTopico.mensaje();
+        }
+    }
 }
