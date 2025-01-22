@@ -94,6 +94,12 @@ public class RegistroDeTopicos {
     public ResponseEntity<?> actualizaTopico(Long id, @Valid DatosActualizacionTopico datosActualizacionTopico) {
         var topico = topicoRepository.getReferenceById(id);
 
+        if(!topicoRepository.existsById(id)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    // No existe el topico en la base de datos
+                    .body("El tópico con el ID especificado no existe.");
+        }
+
         if (datosActualizacionTopico.mensaje() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("El mensaje no puede estar vacío");
