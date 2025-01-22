@@ -125,4 +125,13 @@ public class RegistroDeTopicos {
         return ResponseEntity.status(HttpStatus.CREATED).body(new DatosDetalleTopico(topico));
 
     }
+
+    public ResponseEntity<?> eliminarTopico(Long id) {
+        if(!topicoRepository.existsById(id)){
+            return ResponseEntity.notFound().build(); // NO existe el id
+        }
+
+        topicoRepository.deleteById(id); // Elimina registro de la db
+        return ResponseEntity.noContent().build();
+    }
 }

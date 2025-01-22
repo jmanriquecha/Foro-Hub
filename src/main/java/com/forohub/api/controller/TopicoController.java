@@ -42,4 +42,10 @@ public class TopicoController {
     public ResponseEntity<?> actualizaTopicos(@PathVariable Long id, @RequestBody @Valid DatosActualizacionTopico datosActualizacionTopico){
         return registroDeTopicos.actualizaTopico(id, datosActualizacionTopico);
     }
+
+    // Elimina un topico
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminaTopico(@PathVariable Long id){
+        return registroDeTopicos.eliminarTopico(id);
+    }
 }

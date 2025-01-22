@@ -22,6 +22,7 @@ public class Respuesta {
     @ManyToOne
     @JoinColumn(name = "topico_id", nullable = false)
     private Topico topico;
+    @Column(name = "fecha_creacion") // El nombre debe coincidir con el de la columna en la tabla
     private LocalDateTime fechaCreacion;
     @ManyToOne
     @JoinColumn(name = "autor_id", nullable = false)
